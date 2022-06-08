@@ -1,12 +1,18 @@
-from PIL import Image
+from PIL import Image, ImageOps, ImageDraw, ImageFont
 import numpy as np
 import glob
 from scipy import spatial
+import sys
 
-photo_path = "england.jpeg"
+tile_size = (0,0)
+
+if __name__ == "__main__":
+	tile_size = (int(sys.argv[1]), int(sys.argv[1]))
+
+photo_path = "IMG_2624.jpg"
 tile_photos_path = "albums/*"
 
-tile_size = (100,100)
+#tile_size = (10,10)
 tiles = []
 
 
@@ -62,4 +68,18 @@ for i in range(width):
 		index = closest_colour_indices[i,j]
 		output.paste(tiles[index], (x,y))
 
-output.save("output.jpg")
+#output.show()
+#Add border
+outputWithBorder = ImageOps.expand(output, border = (0, 0, 0, 100))
+
+#Add text
+draw = ImageDraw.Draw(outputWithBorder)
+font = ImageFont.truetype("16020_FUTURAM.ttf", 30)
+#draw.text((outputWithBorder.width / 2, outputWithBorder.height - 100), "Title", (255,255,255), font = font)
+msg = "Title"
+w, h = draw.textsize(msg, font = font)
+draw.text(((outputWithBorder.width - w )/ 2, outputWithBorder.height - 100), msg, (255,255,255), font = font)
+
+
+outputWithBorder.show()
+#output.save("output.jpg")
